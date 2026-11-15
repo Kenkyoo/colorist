@@ -85,7 +85,7 @@ final class GeminiModelProvider
   }
 }
 
-String _$geminiModelHash() => r'09d26db3cc67b796f5f7850a62a2f61324e42c42';
+String _$geminiModelHash() => r'c7f1ed0ea946f44810da0c5b10ca3781efd3bf59';
 
 @ProviderFor(chatSession)
 final chatSessionProvider = ChatSessionProvider._();
