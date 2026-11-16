@@ -46,7 +46,7 @@ final class FirebaseAppProvider
   }
 }
 
-String _$firebaseAppHash() => r'7663fd816ebac4287db82a095568ee3dc843da9a';
+String _$firebaseAppHash() => r'9fd2bd65dbca1d621d366b0bae8a2966a610773e';
 
 @ProviderFor(geminiModel)
 final geminiModelProvider = GeminiModelProvider._();
@@ -85,7 +85,7 @@ final class GeminiModelProvider
   }
 }
 
-String _$geminiModelHash() => r'c7f1ed0ea946f44810da0c5b10ca3781efd3bf59';
+String _$geminiModelHash() => r'c5fbacdc9690aee84c4f3b57da5d4d4738fb1a70';
 
 @ProviderFor(chatSession)
 final chatSessionProvider = ChatSessionProvider._();

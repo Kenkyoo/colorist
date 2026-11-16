@@ -11,19 +11,25 @@ import 'system_prompt.dart';
 part 'gemini.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<FirebaseApp> firebaseApp(Ref ref) =>
-    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+Future<FirebaseApp> firebaseApp(Ref ref) async {
+  if (Firebase.apps.isNotEmpty) {
+    return Firebase.app();
+  }
+  return Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
 
 @Riverpod(keepAlive: true)
 Future<GenerativeModel> geminiModel(Ref ref) async {
-  await ref.watch(firebaseAppProvider.future);
+  final app = await ref.watch(firebaseAppProvider.future);
   final systemPrompt = await ref.watch(systemPromptProvider.future);
-  final geminiTools = ref.watch(geminiToolsProvider); // Add this line
+  final geminiTools = ref.watch(geminiToolsProvider);
 
-  final model = FirebaseAI.googleAI().generativeModel(
+  final model = FirebaseAI.googleAI(app: app).generativeModel(
     model: 'gemini-3.1-flash-lite',
     systemInstruction: Content.system(systemPrompt),
-    tools: geminiTools.tools, // And this line
+    tools: geminiTools.tools,
   );
   return model;
 }
