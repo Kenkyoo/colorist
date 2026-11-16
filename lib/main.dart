@@ -1,5 +1,5 @@
 import 'package:colorist_ui/colorist_ui.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'providers/gemini.dart';
@@ -15,6 +15,7 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(geminiModelProvider);
+    final conversationState = ref.watch(conversationStateProvider);
 
     return MaterialApp(
       theme: ThemeData(
@@ -22,6 +23,7 @@ class MainApp extends ConsumerWidget {
       ),
       home: model.when(
         data: (data) => MainScreen(
+          conversationState: conversationState,
           sendMessage: (text) {
             ref.read(geminiChatServiceProvider).sendMessage(text);
           },
