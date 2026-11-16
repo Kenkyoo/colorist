@@ -24,6 +24,10 @@ class MainApp extends ConsumerWidget {
       home: model.when(
         data: (data) => MainScreen(
           conversationState: conversationState,
+          notifyColorSelection: (color) {
+            // Add from here...
+            ref.read(geminiChatServiceProvider).notifyColorSelection(color);
+          },
           sendMessage: (text) {
             ref.read(geminiChatServiceProvider).sendMessage(text);
           },

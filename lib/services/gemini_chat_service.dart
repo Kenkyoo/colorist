@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert'; // Add this import
 
 import 'package:colorist_ui/colorist_ui.dart';
 import 'package:firebase_ai/firebase_ai.dart';
@@ -11,7 +12,6 @@ import 'gemini_tools.dart';
 part 'gemini_chat_service.g.dart';
 
 class ConversationStateNotifier extends Notifier<ConversationState> {
-  // Add from here...
   @override
   ConversationState build() => ConversationState.idle;
 
@@ -27,22 +27,24 @@ class ConversationStateNotifier extends Notifier<ConversationState> {
 final conversationStateProvider =
     NotifierProvider<ConversationStateNotifier, ConversationState>(
       ConversationStateNotifier.new,
-    ); // To here.
+    );
 
 class GeminiChatService {
   GeminiChatService(this.ref);
   final Ref ref;
 
+  Future<void> notifyColorSelection(ColorData color) => sendMessage(
+    // Add from here...
+    'User selected color from history: ${json.encode(color.toLLMContextMap())}',
+  ); // To here.
+
   Future<void> sendMessage(String message) async {
     final chatSession = await ref.read(chatSessionProvider.future);
-    final conversationState = ref.read(
-      conversationStateProvider,
-    ); // Add this line
+    final conversationState = ref.read(conversationStateProvider);
     final chatStateNotifier = ref.read(chatStateProvider.notifier);
     final logStateNotifier = ref.read(logStateProvider.notifier);
 
     if (conversationState == ConversationState.busy) {
-      // Add from here...
       logStateNotifier.logWarning(
         "Can't send a message while a conversation is in progress",
       );
@@ -53,18 +55,17 @@ class GeminiChatService {
     final conversationStateNotifier = ref.read(
       conversationStateProvider.notifier,
     );
-    conversationStateNotifier.busy(); // To here.
+    conversationStateNotifier.busy();
     chatStateNotifier.addUserMessage(message);
     logStateNotifier.logUserText(message);
     final llmMessage = chatStateNotifier.createLlmMessage();
     try {
-      // Modify from here...
       final responseStream = chatSession.sendMessageStream(
         Content.text(message),
       );
       await for (final block in responseStream) {
         await _processBlock(block, llmMessage.id);
-      } // To here.
+      }
     } catch (e, st) {
       logStateNotifier.logError(e, st: st);
       chatStateNotifier.appendToMessage(
@@ -74,12 +75,11 @@ class GeminiChatService {
       );
     } finally {
       chatStateNotifier.finalizeMessage(llmMessage.id);
-      conversationStateNotifier.idle(); // Add this line.
+      conversationStateNotifier.idle();
     }
   }
 
   Future<void> _processBlock(
-    // Add from here...
     GenerateContentResponse block,
     String llmMessageId,
   ) async {
@@ -114,7 +114,7 @@ class GeminiChatService {
         }
       }
     }
-  } // To here.
+  }
 }
 
 @Riverpod(keepAlive: true)
